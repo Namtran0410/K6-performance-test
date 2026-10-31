@@ -158,3 +158,11 @@ k6 run --summary-export=summary.json K6/smoke.js
 | `apt-get update` lỗi `NO_PUBKEY` | Chạy lại lệnh `--recv-keys` ở mục 1 |
 | `too many open files` khi chạy nhiều VU | Tăng giới hạn file descriptor: `ulimit -n 65536` |
 | `bind: address already in use` khi bật dashboard | Đổi cổng: `K6_WEB_DASHBOARD_PORT=5666` |
+
+Tổng kết 5 loại
+Loại	Tải	Thời lượng	Kết quả
+Load	Bình thường	Vài phút	Pass/fail theo threshold
+Stress	Vượt mức bình thường, tăng theo bậc	10 phút trở lên	Bậc nào hệ thống bắt đầu xuống cấp
+Spike	Vọt lên trong vài giây	Vài phút	Lỗi lúc đỉnh, thời gian hồi phục
+Soak	Bình thường, giữ rất lâu	Vài giờ	Có lỗi tích tụ theo thời gian không
+Breakpoint	Tăng RPS liên tục đến khi hỏng	Đến khi bị dừng	Con số RPS tối đa
