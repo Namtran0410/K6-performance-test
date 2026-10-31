@@ -1,0 +1,24 @@
+{
+  "name": "k6-performance-test",
+  "version": "1.0.0",
+  "description": "Hướng dẫn cài đặt môi trường để chạy performance test bằng [Grafana k6](https://grafana.com/docs/k6/latest/).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Namtran0410/K6-performance-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Namtran0410/K6-performance-test/issues"
+  },
+  "homepage": "https://github.com/Namtran0410/K6-performance-test#readme",
+  "devDependencies": {
+    "@types/k6": "^2.3.1"
+  }
+}
