@@ -12,9 +12,9 @@ import { Options } from "k6/options"
 const BASE_URL='https://api.demoblaze.com'
 export const options: Options = {
     stages: [
-        {duration: "30s", target:200},
-        {duration: "1m", target: 200},
-        {duration: "30s", target: 0}
+        {duration: "2m", target:200},
+        {duration: "3m", target: 200},
+        {duration: "2s", target: 0}
     ],
     thresholds: {
         "http_req_duration{name:viewcart}": ["p(95)<=1000"],
