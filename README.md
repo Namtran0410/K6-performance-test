@@ -81,10 +81,38 @@ Khởi tạo project và cài type definition cho k6, chạy từ thư mục g�
 
 ```bash
 npm init -y
-npm install --save-dev @types/k6
+npm install --save-dev @types/k6 typescript
 ```
 
 Thêm `node_modules/` vào `.gitignore`, và commit `package.json` cùng `package-lock.json`. Từ lần sau, chỉ cần chạy `npm ci` để cài lại.
+
+### Cấu hình TypeScript
+
+`tsconfig.json` chỉ phục vụ editor và kiểm tra type, `k6 run` không cần file này. Tạo file ở thư mục gốc của repo (không dùng cấu hình mặc định của `tsc --init` vì không hợp với script k6):
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2020", "DOM"],
+    "types": ["k6"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["K6/**/*.ts"]
+}
+```
+
+Kiểm tra type:
+
+```bash
+npx tsc -p tsconfig.json
+```
+
+Lệnh không in gì nghĩa là không có lỗi. Sau khi đổi `tsconfig.json`, trong VS Code nhấn `Ctrl+Shift+P` và chọn **TypeScript: Restart TS Server**.
 
 ## 4. Chạy thử test đầu tiên
 
@@ -156,6 +184,8 @@ k6 run --summary-export=summary.json K6/smoke.js
 | `npm: command not found` | Chạy `source ~/.nvm/nvm.sh`, hoặc cài lại theo mục 3 |
 | `sudo gpg -k` hoặc `--recv-keys` lỗi keyserver | Kiểm tra mạng/proxy, cho phép cổng 80 tới `keyserver.ubuntu.com`, rồi chạy lại |
 | `apt-get update` lỗi `NO_PUBKEY` | Chạy lại lệnh `--recv-keys` ở mục 1 |
+| `Cannot find module 'k6/...'` trong VS Code | Chạy `npm ci`, tạo `tsconfig.json` theo mục 3, rồi Restart TS Server |
+| `TS1295`, `TS1287` hoặc `TS1484` khi chạy `tsc` | Dùng `tsconfig.json` ở mục 3 thay cho cấu hình của `tsc --init` |
 | `too many open files` khi chạy nhiều VU | Tăng giới hạn file descriptor: `ulimit -n 65536` |
 | `bind: address already in use` khi bật dashboard | Đổi cổng: `K6_WEB_DASHBOARD_PORT=5666` |
 
