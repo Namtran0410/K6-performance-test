@@ -196,3 +196,81 @@ Stress	Vượt mức bình thường, tăng theo bậc	10 phút trở lên	Bậc
 Spike	Vọt lên trong vài giây	Vài phút	Lỗi lúc đỉnh, thời gian hồi phục
 Soak	Bình thường, giữ rất lâu	Vài giờ	Có lỗi tích tụ theo thời gian không
 Breakpoint	Tăng RPS liên tục đến khi hỏng	Đến khi bị dừng	Con số RPS tối đa
+
+
+phím tắt nhé Nam, dán vào cuối file code ~/.zshrc
+lưu xong thì chạy : sudo apt install wl-clipboard
+
+# ================================================================
+#  Chọn, xóa, sao chép chữ bằng bàn phím trong zsh (kiểu Windows)
+# ================================================================
+
+# Tạo phím chọn (sel) hoặc phím di chuyển bỏ chọn (mv)
+# $1 = mã phím, $2 = sel | mv, $3 = lệnh di chuyển gốc của zsh
+_kbsel_bind() {
+  local name="_kbsel-$2-$3"
+  if [[ $2 == sel ]]; then
+    eval "$name() { ((REGION_ACTIVE)) || zle set-mark-command; zle $3 }"
+  else
+    eval "$name() { REGION_ACTIVE=0; zle $3 }"
+  fi
+  zle -N $name
+  bindkey "$1" $name
+}
+
+# --- Giữ Shift: chọn chữ ---
+_kbsel_bind '^[[1;2D' sel backward-char       # Shift + ←
+_kbsel_bind '^[[1;2C' sel forward-char        # Shift + →
+_kbsel_bind '^[[1;6D' sel backward-word       # Ctrl + Shift + ←
+_kbsel_bind '^[[1;6C' sel forward-word        # Ctrl + Shift + →
+_kbsel_bind '^[[1;2H' sel beginning-of-line   # Shift + Home
+_kbsel_bind '^[[1;2F' sel end-of-line         # Shift + End
+
+# --- Không giữ Shift: bỏ chọn rồi di chuyển ---
+# Mỗi phím có 2 đến 3 mã, tùy chế độ của terminal, nên gán đủ các mã
+for k in '^[[D' '^[OD';          do _kbsel_bind $k mv backward-char;     done  # ←
+for k in '^[[C' '^[OC';          do _kbsel_bind $k mv forward-char;      done  # →
+_kbsel_bind '^[[1;5D' mv backward-word                                          # Ctrl + ←
+_kbsel_bind '^[[1;5C' mv forward-word                                           # Ctrl + →
+for k in '^[[H' '^[OH' '^[[1~';  do _kbsel_bind $k mv beginning-of-line; done  # Home
+for k in '^[[F' '^[OF' '^[[4~';  do _kbsel_bind $k mv end-of-line;       done  # End
+
+# --- Alt + A: chọn cả dòng lệnh ---
+_kbsel-select-all() { MARK=0; CURSOR=${#BUFFER}; REGION_ACTIVE=1 }
+zle -N _kbsel-select-all
+bindkey '^[a' _kbsel-select-all
+
+# --- Backspace / Delete: xóa phần đang chọn, nếu không chọn thì xóa 1 ký tự ---
+_kbsel-del-or() { if ((REGION_ACTIVE)); then zle kill-region; else zle $1; fi }
+_kbsel-backspace() { _kbsel-del-or backward-delete-char }; zle -N _kbsel-backspace
+_kbsel-delete()    { _kbsel-del-or delete-char };          zle -N _kbsel-delete
+bindkey '^?'    _kbsel-backspace   # Backspace
+bindkey '^[[3~' _kbsel-delete      # Delete
+
+# --- Ctrl + Backspace / Ctrl + Delete: xóa cả một từ ---
+bindkey '^H'      backward-kill-word   # Ctrl + Backspace
+bindkey '^[[3;5~' kill-word            # Ctrl + Delete
+
+# --- Gõ chữ hoặc dán: thay thế phần đang chọn ---
+_kbsel-insert() { ((REGION_ACTIVE)) && zle kill-region; zle .self-insert }
+zle -N self-insert _kbsel-insert
+_kbsel-paste() { ((REGION_ACTIVE)) && zle kill-region; zle .bracketed-paste }
+zle -N bracketed-paste _kbsel-paste
+
+# --- Alt + C: sao chép, Alt + X: cắt (cần: sudo apt install wl-clipboard) ---
+_kbsel-text() {
+  local a=$(( MARK < CURSOR ? MARK : CURSOR )) b=$(( MARK > CURSOR ? MARK : CURSOR ))
+  print -rn -- "${BUFFER[a+1,b]}"
+}
+_kbsel-copy() { ((REGION_ACTIVE)) || return; _kbsel-text | wl-copy; REGION_ACTIVE=0 }
+_kbsel-cut()  { ((REGION_ACTIVE)) || return; _kbsel-text | wl-copy; zle kill-region }
+zle -N _kbsel-copy; zle -N _kbsel-cut
+bindkey '^[c' _kbsel-copy
+bindkey '^[x' _kbsel-cut
+
+# --- Giữ được tính năng nhận gợi ý lệnh của zsh-autosuggestions ---
+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(_kbsel-mv-forward-char _kbsel-mv-end-of-line)
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(_kbsel-mv-forward-word)
+
+# --- Màu nền cho phần đang chọn ---
+zle_highlight=(region:bg=blue,fg=white)
