@@ -111,7 +111,7 @@ Kiểm tra type:
 ```bash
 npx tsc -p tsconfig.json
 ```
-
+npm install --save-dev @types/node
 Lệnh không in gì nghĩa là không có lỗi. Sau khi đổi `tsconfig.json`, trong VS Code nhấn `Ctrl+Shift+P` và chọn **TypeScript: Restart TS Server**.
 
 ## 4. Chạy thử test đầu tiên
