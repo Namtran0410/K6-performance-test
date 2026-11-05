@@ -88,7 +88,6 @@ export default function(accountList: Account[]){
     check(resCheck, {
         "token status 200": (r)=> r.status === 200,
         "token belong tp user": (r)=> r.json("Item.username") === user.username,
-        
     },
     {name: "check"})
     sleep(1)
