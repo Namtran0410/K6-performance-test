@@ -45,7 +45,11 @@ function signupFunction(account:Account):Account{
         test.abort(`Create account failed: ${res.status}: ${res.body}`)
     }
     // trả password PLAIN để fill vào ô login (frontend sẽ base64 lại -> khớp bản đã lưu)
-    return account
+    const returnAccount: Account = {
+        username: account.username,
+        password
+    }
+    return returnAccount
 }
 function loginFunction(account:Account) {
     const payload = JSON.stringify(account)
