@@ -1,0 +1,38 @@
+services:
+  k6-001:
+    build: .
+    image: "k6-test"
+    container_name: "k6-001-test"
+    tty: true
+    ports:
+      - "1000:1000"
+    volumes:
+      - ./K6:/K6
+    networks:
+      - k6-test-network
+    deploy:
+      resources: 
+        limits: 
+          cpus: "3"
+          memory: 256MB
+    command: k6 run /K6/test/03.docker-simulation/00.simulator-ramping-vus.test.ts
+
+  k6-002:
+    build: .
+    image: "k6-test"
+    container_name: "k6-002-test"
+    tty: true
+    ports:
+      - "1001:1001"
+    volumes:
+      - ./K6:/K6
+    networks:
+      - k6-test-network
+    deploy:
+      resources: 
+        limits: 
+          cpus: "3"
+          memory: 256MB
+    command:  k6 run /K6/test/03.docker-simulation/00.simulator-ramping-vus.test.ts
+networks:
+  k6-test-network:
