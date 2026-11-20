@@ -274,3 +274,11 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(_kbsel-mv-forward-word)
 
 # --- Màu nền cho phần đang chọn ---
 zle_highlight=(region:bg=blue,fg=white)
+
+
+
+# Run prometheus
+K6_BROWSER_EXECUTABLE_PATH=/home/nam/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome \
+K6_PROMETHEUS_RW_SERVER_URL=http://localhost:9090/api/v1/write \
+K6_PROMETHEUS_RW_TREND_STATS="p(95),p(99),min,max,avg" \
+k6 run --out experimental-prometheus-rw --tag testid=hy-002-run1 K6/test/04.advanced/advance.002.test.ts

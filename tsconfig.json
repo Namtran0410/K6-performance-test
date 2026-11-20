@@ -7,7 +7,8 @@
     "types": ["k6","node"],
     "strict": true,
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true
   },
   "include": ["K6/**/*.ts"]
 }
