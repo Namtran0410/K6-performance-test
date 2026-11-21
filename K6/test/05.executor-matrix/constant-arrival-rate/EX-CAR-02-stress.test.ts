@@ -2,7 +2,7 @@ import http from "k6/http"
 import {check, sleep} from "k6"
 import { Options } from "k6/options"
 import exec, {test} from "k6/execution"
-import { utils, Account } from "../../../utils/common"
+import { utils, Account } from "../../../utils/common.ts"
 
 const rate = 2
 
@@ -22,7 +22,7 @@ export const options: Options = {
         "http_req_failed": ["rate<0.05"],
         "http_req_failed{name:login}":["rate<0.05"],
         "http_req_failed{name:check}":["rate<0.05"],
-        "dropped_iteration": []
+        "dropped_iterations": []
     }
 }
 
@@ -32,7 +32,7 @@ export function setup():Account{
         password: "ThisIsPassword"
     }
     const {res, account} = utils.auth.signup(payload)
-    if(res.status == 200 || String(res.body).includes("errorMessage")) {
+    if(res.status !== 200 || String(res.body).includes("errorMessage")) {
         test.abort(`Failed when create user`)
     }
     return account
